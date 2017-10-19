@@ -13,14 +13,9 @@
 ;   :body (
 
 (defn view-layout [& content]
-  (html
-    (doctype :xhtml-strict)
-    (xhtml-tag "en"
-      [:head
-        [:meta {:http-equiv "Content-type"
-                :content "text/html; charset=utf-8"}]
-        [:title "adder"]]
-      [:body content])))
+  {:status 200
+   :headers {"Content-Type" "text/html"}
+   :body content})
 
 (defn view-input []
   (view-layout
