@@ -6,7 +6,7 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db])
-  (:use 'hiccup.core))
+  (:use [hiccup.core]))
 
 ;(defn splash []
 ;  {:status 200
