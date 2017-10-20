@@ -8,23 +8,23 @@
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]))
 
-;(defn splash []
-;  {:status 200
-;   :headers {"Content-Type" "text/html"}
-;   :body (
-
+;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (html content)})
 
+;; Splash page takes course representative input.
 (defn view-input []
   (view-layout
-    [:h2 "add two numbers"]
-    [:form {:method "post" :action "/"}
-      [:input.math {:type "text" :name "a"}] [:span.math " + "]
-      [:input.math {:type "text" :name "b"}] [:br]
-      [:input.action {:type "submit" :value "add"}]]))
+    [:h2 "Welcome to the Greenlight Courses app"]
+    [:form {:method "post" :action "/confirmation"}
+      [:span "Course ID"] [:input {:type "number" :name "course_id"}] [:br]
+      [:span "Course email"] [:input {:type "email" :name "course_email"}] [:br]
+      [:span "Member ID"] [:input {:type "number" :name "member_id"}] [:br]
+      [:span "Member email"] [:input {:type "email" :name "member_email"}] [:br]
+      [:span "Number of holes"] [:input {:type "number" :name "holes"}] [:br]
+      [:input {:type "submit" :value "Validate member"}]]))
 
 (defn view-output [a b sum]
   (view-layout
