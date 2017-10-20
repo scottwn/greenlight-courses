@@ -5,7 +5,8 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
-            [clojure.java.jdbc :as db]))
+            [clojure.java.jdbc :as db])
+  (:use 'hiccup.core))
 
 ;(defn splash []
 ;  {:status 200
@@ -15,7 +16,7 @@
 (defn view-layout [& content]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body content})
+   :body (html content)})
 
 (defn view-input []
   (view-layout
