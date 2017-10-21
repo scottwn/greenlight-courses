@@ -75,11 +75,13 @@
    (GET "/" []
         (view-input))
    (POST "/confirmation" [course_id course_email member_id member_email holes]
-        (if (and
-              (validate-course course_id course_email)
-              (validate-member member_id member_email))
-          (view-confirmation course_id member_id holes)
-          (view-bad-input course_id course_email member_id member_email))))
+         (let [course (Integer/parseInt course_id)
+               member (Integer/parseInt member_id)
+               number_holes (Integer/parseInt holes)]
+           (if (and (validate-course course course_email)
+                    (validate-member member member_email))
+             (view-confirmation course member number_holes)
+             (view-bad-input course course_email member member_email)))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
