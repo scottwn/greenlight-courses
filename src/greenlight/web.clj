@@ -81,7 +81,35 @@
            (if (and (validate-course course course_email)
                     (validate-member member member_email))
              (view-confirmation course member number_holes)
-             (view-bad-input course course_email member member_email)))))
+             (view-bad-input course course_email member member_email))))
+   (POST "/" [course member holes]
+         (let [course_map (db/get-by-id (env :database-url) :courses course)
+               member_map (db/get-by-id (env :database-url) :members member)
+               course_holes (get course_map :holes)
+               course_holes_this_week (get course_map :holes_this_week)
+               member_holes (get member_map :holes)
+               member_holes_this_week (get member_map :holes_this_week)]
+           (db/update!
+             (env :database-url)
+             :courses
+             {:holes (+ holes course_holes)}
+             ["id = ?" course])
+           (db/update!
+             (env :database-url)
+             :courses
+             {:holes_this_week (+ holes course_holes_this_week)}
+             ["id = ?" course])
+           (db/update!
+             (env :database-url)
+             :members
+             {:holes (+ holes member_holes)}
+             ["id = ?" member])
+           (db/update!
+             (env :database-url)
+             :members
+             {:holes_this_week (+ holes member_holes_this_week)}
+             ["id = ?" member])
+           (view-input))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
