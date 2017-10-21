@@ -35,13 +35,17 @@
 (defn parse-input [a b]
   [(Integer/parseInt a) (Integer/parseInt b)])
 
+(defn validate-course [id email]
+
 (defroutes app
    (GET "/" []
         (view-input))
-   (POST "/" [a b]
-         (let [[a b] (parse-input a b)
-               sum (+ a b)]
-           (view-output a b sum))))
+   (POST "/confirmation" [course_id course_email member_id member_email holes]
+        (if (and
+              (validate-course course_id course_email)
+              (validate-member member_id member_email))
+          (view-confirmation)
+          (view-bad-input))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
