@@ -8,40 +8,78 @@
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]))
 
-;(defn splash []
-;  {:status 200
-;   :headers {"Content-Type" "text/html"}
-;   :body (
-
+;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
   {:status 200
    :headers {"Content-Type" "text/html"}
    :body (html content)})
 
+;; Splash page takes course representative input.
 (defn view-input []
   (view-layout
-    [:h2 "add two numbers"]
-    [:form {:method "post" :action "/"}
-      [:input.math {:type "text" :name "a"}] [:span.math " + "]
-      [:input.math {:type "text" :name "b"}] [:br]
-      [:input.action {:type "submit" :value "add"}]]))
+    [:h2 "Welcome to the Greenlight Courses app"]
+    [:form {:method "post" :action "/confirmation"}
+     [:span "Course ID"] [:input {:type "number" :name "course_id"}] [:br]
+     [:span "Course email"] [:input {:type "email" :name "course_email"}] [:br]
+     [:span "Member ID"] [:input {:type "number" :name "member_id"}] [:br]
+     [:span "Member email"] [:input {:type "email" :name "member_email"}] [:br]
+     [:span "Number of holes"] [:input {:type "number" :name "holes"}] [:br]
+     [:input {:type "submit" :value "Validate member"}]]))
 
-(defn view-output [a b sum]
+;; TODO: Refactor this ish.
+(defn validate-course [id email]
+  (not-empty (db/find-by-keys
+               (env :database-url)
+               :courses
+               {:id id :contact_email email})))
+
+(defn validate-member [id email]
+  (not-empty (db/find-by-keys
+               (env :database-url)
+               :members
+               {:id id :contact_email email})))
+
+(defn view-confirmation [course member holes]
   (view-layout
-    [:h2 "two numbers added"]
-    [:p.math a " + " b " = " sum]
-    [:a.action {:href "/"} "add more numbers"]))
+    [:span (get (db/get-by-id (env :database-url) :members member) :name)]
+    [:span " is going to play "]
+    [:span holes]
+    [:span " holes at "]
+    [:span (get (db/get-by-id (env :database-url) :courses course) :name)]
+    [:span ". Is this correct?"] [:br]
+    [:form {:method "post" :action "/"}
+     [:input {:type "hidden" :name "course" :value course}]
+     [:input {:type "hidden" :name "member" :value member}]
+     [:input {:type "hidden" :name "holes" :value holes}]
+     [:input {:type "submit" :value "Yeah let's go!"}]]
+    [:form {:method "get" :action "/"}
+     [:input {:type "submit" :value "Something's not right."}]]))
 
-(defn parse-input [a b]
-  [(Integer/parseInt a) (Integer/parseInt b)])
+(defn go-back [content]
+  (view-layout
+    [:span content] [:br]
+    [:a {:href "https://greenlight-courses.herokuapp.com"} "go back"]))
+
+(defn view-bad-input [course_id course_email member_id member_email]
+  (let [course (db/get-by-id (env :database-url) :courses course_id)
+        member (db/get-by-id (env :database-url) :members member_id)]
+    (cond (empty? course) (go-back "There is no course with that ID")
+          (not (= (get course :contact_email) course_email))
+          (go-back "Course email does not match ID")
+          (empty? member) (go-back "There is no member with that ID")
+          (not (= (get member :contact_email) member_email))
+          (go-back "Member email does not match ID")
+          :else (go-back "Unkown error!"))))
 
 (defroutes app
    (GET "/" []
         (view-input))
-   (POST "/" [a b]
-         (let [[a b] (parse-input a b)
-               sum (+ a b)]
-           (view-output a b sum))))
+   (POST "/confirmation" [course_id course_email member_id member_email holes]
+        (if (and
+              (validate-course course_id course_email)
+              (validate-member member_id member_email))
+          (view-confirmation course_id member_id holes)
+          (view-bad-input course_id course_email member_id member_email))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
