@@ -83,7 +83,10 @@
              (view-confirmation course member number_holes)
              (view-bad-input course course_email member member_email))))
    (POST "/" [course member holes]
-         (let [course_map (db/get-by-id (env :database-url) :courses course)
+         (let [course (Integer/parseInt course)
+               member (Integer/parseInt member)
+               holes (Integer/parseInt holes)
+               course_map (db/get-by-id (env :database-url) :courses course)
                member_map (db/get-by-id (env :database-url) :members member)
                course_holes (get course_map :holes)
                course_holes_this_week (get course_map :holes_this_week)
