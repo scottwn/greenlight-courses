@@ -23,7 +23,8 @@
      [:span "Course email"] [:input {:type "email" :name "course_email"}] [:br]
      [:span "Member ID"] [:input {:type "number" :name "member_id"}] [:br]
      [:span "Member email"] [:input {:type "email" :name "member_email"}] [:br]
-     [:span "Number of holes"] [:input {:type "number" :name "holes"}] [:br]
+     [:span "9 holes"] [:input {:type "radio" :name "holes" :value "9"}] [:br]
+     [:span "18 holes"] [:input {:type "radio" :name "holes" :value "18"}] [:br]
      [:input {:type "submit" :value "Validate member"}]]))
 
 ;; TODO: Refactor this ish.
