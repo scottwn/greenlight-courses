@@ -20,25 +20,16 @@
     [:h2 "Welcome to the Greenlight Courses app"]
     [:form {:method "post" :action "/confirmation"}
      [:span "Course ID"] [:input {:type "number" :name "course_id"}] [:br]
-     [:span "Course email"] [:input {:type "email" :name "course_email"}] [:br]
      [:span "Member ID"] [:input {:type "number" :name "member_id"}] [:br]
-     [:span "Member email"] [:input {:type "email" :name "member_email"}] [:br]
      [:span "9 holes"] [:input {:type "radio" :name "holes" :value "9"}] [:br]
      [:span "18 holes"] [:input {:type "radio" :name "holes" :value "18"}] [:br]
      [:input {:type "submit" :value "Validate member"}]]))
 
-;; TODO: Refactor this ish.
-(defn validate-course [id email]
+(defn validate [table id]
   (not-empty (db/find-by-keys
                (env :database-url)
-               :courses
-               {:id id :contact_email email})))
-
-(defn validate-member [id email]
-  (not-empty (db/find-by-keys
-               (env :database-url)
-               :members
-               {:id id :contact_email email})))
+               table
+               {:id id})))
 
 (defn view-confirmation [course member holes]
   (view-layout
@@ -75,12 +66,12 @@
 (defroutes app
    (GET "/" []
         (view-input))
-   (POST "/confirmation" [course_id course_email member_id member_email holes]
+   (POST "/confirmation" [course_id member_id holes]
          (let [course (Integer/parseInt course_id)
                member (Integer/parseInt member_id)
                number_holes (Integer/parseInt holes)]
-           (if (and (validate-course course course_email)
-                    (validate-member member member_email))
+           (if (and (validate :courses course_id)
+                    (validate :members member_id))
              (view-confirmation course member number_holes)
              (view-bad-input course course_email member member_email))))
    (POST "/" [course member holes]
