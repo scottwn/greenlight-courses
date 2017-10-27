@@ -25,12 +25,6 @@
      [:span "18 holes"] [:input {:type "radio" :name "holes" :value "18"}] [:br]
      [:input {:type "submit" :value "Validate member"}]]))
 
-(defn validate [table id]
-  (not-empty (db/find-by-keys
-               (env :database-url)
-               table
-               {:id id})))
-
 (defn view-confirmation [course member holes]
   (view-layout
     [:span (get (db/get-by-id (env :database-url) :members member) :name)]
@@ -70,8 +64,8 @@
          (let [course (Integer/parseInt course_id)
                member (Integer/parseInt member_id)
                number_holes (Integer/parseInt holes)]
-           (if (and (validate :courses course_id)
-                    (validate :members member_id))
+           (if (and (not-empty (db/get-by-id (env :database-url) :courses course_id))
+                    (not-empty (db/get-by-id (env :database-url) :members member_id)))
              (view-confirmation course member number_holes)
              (view-bad-input course course_email member member_email))))
    (POST "/" [course member holes]
