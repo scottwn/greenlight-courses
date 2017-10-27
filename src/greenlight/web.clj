@@ -46,28 +46,47 @@
     [:span content] [:br]
     [:a {:href "https://greenlight-courses.herokuapp.com"} "go back"]))
 
-(defn view-bad-input [course_id course_email member_id member_email]
-  (let [course (db/get-by-id (env :database-url) :courses course_id)
-        member (db/get-by-id (env :database-url) :members member_id)]
-    (cond (empty? course) (go-back "There is no course with that ID")
-          (not (= (get course :contact_email) course_email))
-          (go-back "Course email does not match ID")
-          (empty? member) (go-back "There is no member with that ID")
-          (not (= (get member :contact_email) member_email))
-          (go-back "Member email does not match ID")
-          :else (go-back "Unkown error!"))))
-
 (defroutes app
    (GET "/" []
         (view-input))
    (POST "/confirmation" [course_id member_id holes]
          (let [course (Integer/parseInt course_id)
                member (Integer/parseInt member_id)
-               number_holes (Integer/parseInt holes)]
-           (if (and (not-empty (db/get-by-id (env :database-url) :courses course_id))
-                    (not-empty (db/get-by-id (env :database-url) :members member_id)))
-             (view-confirmation course member number_holes)
-             (view-bad-input course course_email member member_email))))
+               number_holes (Integer/parseInt holes)
+               holes_map (db/find-by-keys
+                           (env :database-url)
+                           :holes_remaining
+                           {:member member :course course})]
+           (cond (empty? (db/get-by-id (env :database-url) :courses course))
+                 (go-back "There is no course with that ID.")
+                 (empty? (db/get-by-id (env :database-url) :members member))
+                 (go-back "There is no member with that ID.")
+                 (empty? holes_map) (do
+                                      (db/insert!
+                                        (env :database_url)
+                                        :holes_remaining
+                                        [member course 36])
+                                      (view-confirmation
+                                        course
+                                        member
+                                        number_holes))
+                 (< (- (get holes_map :holes_remaining) number_holes) 0)
+                 (go-back (apply str [(get
+                                        (db/get-by-id
+                                          (env :database-url)
+                                          :members
+                                          member)
+                                        :name)
+                                      " can only play "
+                                      (get holes_map :holes_remaining)
+                                      " more holes at "
+                                      (get (db/get-by-id
+                                             (env :database-url)
+                                             :courses
+                                             course)
+                                           :name)
+                                      "."]))
+                 :else (view-confirmation course member number_holes))))
    (POST "/" [course member holes]
          (let [course (Integer/parseInt course)
                member (Integer/parseInt member)
