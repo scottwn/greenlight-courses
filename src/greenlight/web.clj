@@ -8,6 +8,8 @@
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]))
 
+(def max_holes 36)
+
 ;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
   {:status 200
@@ -65,7 +67,7 @@
                                       (db/insert!
                                         (env :database_url)
                                         :holes_remaining
-                                        [member course 36])
+                                        [member course max_holes])
                                       (view-confirmation
                                         course
                                         member
@@ -86,37 +88,28 @@
                                              course)
                                            :name)
                                       "."]))
+                 ;;TODO: fix view-confirmation
                  :else (view-confirmation course member number_holes))))
    (POST "/" [course member holes]
          (let [course (Integer/parseInt course)
                member (Integer/parseInt member)
                holes (Integer/parseInt holes)
-               course_map (db/get-by-id (env :database-url) :courses course)
-               member_map (db/get-by-id (env :database-url) :members member)
-               course_holes (get course_map :holes)
-               course_holes_this_week (get course_map :holes_this_week)
-               member_holes (get member_map :holes)
-               member_holes_this_week (get member_map :holes_this_week)]
+               holes_remaining (get
+                                 (db/find-by-keys
+                                   (env :database-url)
+                                   :holes_remaining
+                                   {:member member :course course})
+                                 :holes_remaining)]
+           (db/insert!
+             (env :database-url)
+             :transactions
+             [:member :course :holes]
+             [member course holes])
            (db/update!
              (env :database-url)
-             :courses
-             {:holes (+ holes course_holes)}
-             ["id = ?" course])
-           (db/update!
-             (env :database-url)
-             :courses
-             {:holes_this_week (+ holes course_holes_this_week)}
-             ["id = ?" course])
-           (db/update!
-             (env :database-url)
-             :members
-             {:holes (+ holes member_holes)}
-             ["id = ?" member])
-           (db/update!
-             (env :database-url)
-             :members
-             {:holes_this_week (+ holes member_holes_this_week)}
-             ["id = ?" member])
+             :holes_remaining
+             {:holes_remaining (- holes_remaining holes)}
+             ["course = ?" course "member = ?" member])
            (view-input))))
 
 (defn -main [& [port]]
