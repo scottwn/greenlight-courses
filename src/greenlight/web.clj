@@ -67,7 +67,7 @@
                                       (db/insert!
                                         (env :database_url)
                                         :holes_remaining
-                                        [member course max_holes])
+                                        {:member member :course course :holes_remaining max_holes})
                                       (view-confirmation
                                         course
                                         member
@@ -102,8 +102,7 @@
            (db/insert!
              (env :database-url)
              :transactions
-             [:member :course :holes]
-             [member course holes])
+             {:member member :course course :holes holes})
            (db/update!
              (env :database-url)
              :holes_remaining
