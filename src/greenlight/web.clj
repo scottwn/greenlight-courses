@@ -88,7 +88,6 @@
                                              course)
                                            :name)
                                       "."]))
-                 ;;TODO: fix view-confirmation
                  :else (view-confirmation course member number_holes))))
    (POST "/" [course member holes]
          (let [course (Integer/parseInt course)
