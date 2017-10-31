@@ -8,7 +8,7 @@
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]))
 
-(def max_holes 36)
+(def max-holes 36)
 
 ;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
@@ -21,8 +21,8 @@
   (view-layout
     [:h2 "Welcome to the Greenlight Courses app"]
     [:form {:method "post" :action "/confirmation"}
-     [:span "Course ID"] [:input {:type "number" :name "course_id"}] [:br]
-     [:span "Member ID"] [:input {:type "number" :name "member_id"}] [:br]
+     [:span "Course ID"] [:input {:type "number" :name "course-id"}] [:br]
+     [:span "Member ID"] [:input {:type "number" :name "member-id"}] [:br]
      [:span "9 holes"] [:input {:type "radio" :name "holes" :value "9"}] [:br]
      [:span "18 holes"] [:input {:type "radio" :name "holes" :value "18"}] [:br]
      [:input {:type "submit" :value "Validate member"}]]))
@@ -51,11 +51,11 @@
 (defroutes app
    (GET "/" []
         (view-input))
-   (POST "/confirmation" [course_id member_id holes]
-         (let [course (Integer/parseInt course_id)
-               member (Integer/parseInt member_id)
-               number_holes (Integer/parseInt holes)
-               holes_map (db/find-by-keys
+   (POST "/confirmation" [course-id member-id holes]
+         (let [course (Integer/parseInt course-id)
+               member (Integer/parseInt member-id)
+               number-holes (Integer/parseInt holes)
+               holes-map (db/find-by-keys
                            (env :database-url)
                            :holes_remaining
                            {:member member :course course})]
@@ -63,16 +63,16 @@
                  (go-back "There is no course with that ID.")
                  (empty? (db/get-by-id (env :database-url) :members member))
                  (go-back "There is no member with that ID.")
-                 (empty? holes_map) (do
+                 (empty? holes-map) (do
                                       (db/insert!
                                         (env :database_url)
                                         :holes_remaining
-                                        {:member member :course course :holes_remaining max_holes})
+                                        {:member member :course course :holes_remaining max-holes})
                                       (view-confirmation
                                         course
                                         member
-                                        number_holes))
-                 (< (- (get holes_map :holes_remaining) number_holes) 0)
+                                        number-holes))
+                 (< (- (get holes-map :holes_remaining) number-holes) 0)
                  (go-back (apply str [(get
                                         (db/get-by-id
                                           (env :database-url)
@@ -80,7 +80,7 @@
                                           member)
                                         :name)
                                       " can only play "
-                                      (get holes_map :holes_remaining)
+                                      (get holes-map :holes_remaining)
                                       " more holes at "
                                       (get (db/get-by-id
                                              (env :database-url)
@@ -88,12 +88,12 @@
                                              course)
                                            :name)
                                       "."]))
-                 :else (view-confirmation course member number_holes))))
+                 :else (view-confirmation course member number-holes))))
    (POST "/" [course member holes]
          (let [course (Integer/parseInt course)
                member (Integer/parseInt member)
                holes (Integer/parseInt holes)
-               holes_remaining (get
+               holes-remaining (get
                                  (db/find-by-keys
                                    (env :database-url)
                                    :holes_remaining
@@ -106,7 +106,7 @@
            (db/update!
              (env :database-url)
              :holes_remaining
-             {:holes_remaining (- holes_remaining holes)}
+             {:holes_remaining (- holes-remaining holes)}
              ["course = ?" course "member = ?" member])
            (view-input))))
 
