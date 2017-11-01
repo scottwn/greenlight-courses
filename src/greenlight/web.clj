@@ -58,7 +58,17 @@
                holes-map (first (db/find-by-keys
                                   (env :database-url)
                                   :holes_remaining
-                                  {:member member :course course}))]
+                                  {:member member :course course}))
+               member-name (get (db/get-by-id
+                                  (env :database-url)
+                                  :members
+                                  member)
+                                :name)
+               course-name (get (db/get-by-id
+                                  (env :database-url)
+                                  :courses
+                                  course)
+                                :name)]
            (cond (empty? (db/get-by-id (env :database-url) :courses course))
                  (go-back "There is no course with that ID.")
                  (empty? (db/get-by-id (env :database-url) :members member))
@@ -73,21 +83,19 @@
                                         course
                                         member
                                         number-holes))
+                 (= (get holes-map :holes_remaining) 0)
+                 (go-back (apply str [member-name
+                                      " has alread played "
+                                      max-holes
+                                      " at "
+                                      course-name
+                                      "."]))
                  (< (- (get holes-map :holes_remaining) number-holes) 0)
-                 (go-back (apply str [(get
-                                        (db/get-by-id
-                                          (env :database-url)
-                                          :members
-                                          member)
-                                        :name)
+                 (go-back (apply str [member-name
                                       " can only play "
                                       (get holes-map :holes_remaining)
                                       " more holes at "
-                                      (get (db/get-by-id
-                                             (env :database-url)
-                                             :courses
-                                             course)
-                                           :name)
+                                      course-name
                                       "."]))
                  :else (view-confirmation course member number-holes))))
    (POST "/" [course member holes]
