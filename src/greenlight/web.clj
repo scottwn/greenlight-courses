@@ -55,10 +55,10 @@
          (let [course (Integer/parseInt course-id)
                member (Integer/parseInt member-id)
                number-holes (Integer/parseInt holes)
-               holes-map (db/find-by-keys
-                           (env :database-url)
-                           :holes_remaining
-                           {:member member :course course})]
+               holes-map (first (db/find-by-keys
+                                  (env :database-url)
+                                  :holes_remaining
+                                  {:member member :course course}))]
            (cond (empty? (db/get-by-id (env :database-url) :courses course))
                  (go-back "There is no course with that ID.")
                  (empty? (db/get-by-id (env :database-url) :members member))
@@ -94,12 +94,11 @@
          (let [course (Integer/parseInt course)
                member (Integer/parseInt member)
                holes (Integer/parseInt holes)
-               holes-remaining (get
-                                 (db/find-by-keys
-                                   (env :database-url)
-                                   :holes_remaining
-                                   {:member member :course course})
-                                 :holes_remaining)]
+               holes-remaining (get (first (db/find-by-keys
+                                             (env :database-url)
+                                             :holes_remaining
+                                             {:member member :course course}))
+                                             :holes_remaining)]
            (println holes-remaining "-" holes "=" (- holes-remaining holes))
            (db/insert!
              (env :database-url)
