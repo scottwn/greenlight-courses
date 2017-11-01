@@ -108,7 +108,7 @@
              (env :database-url)
              :holes_remaining
              {:holes_remaining (- holes-remaining holes)}
-             ["course = ?" course "member = ?" member])
+             ["course = ? and member = ?" course member])
            (view-input))))
 
 (defn -main [& [port]]
