@@ -66,7 +66,7 @@
                  (empty? holes-map) (do
                                       (println "No record found in holes_remaining, adding max-holes")
                                       (db/insert!
-                                        (env :database_url)
+                                        (env :database-url)
                                         :holes_remaining
                                         {:member member :course course :holes_remaining max-holes})
                                       (view-confirmation
