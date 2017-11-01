@@ -100,6 +100,7 @@
                                    :holes_remaining
                                    {:member member :course course})
                                  :holes_remaining)]
+           (println holes-remaining "-" holes "=" (- holes-remaining holes))
            (db/insert!
              (env :database-url)
              :transactions
