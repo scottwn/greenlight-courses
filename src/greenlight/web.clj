@@ -85,9 +85,9 @@
                                         number-holes))
                  (= (get holes-map :holes_remaining) 0)
                  (go-back (apply str [member-name
-                                      " has alread played "
+                                      " has already played "
                                       max-holes
-                                      " at "
+                                      " holes at "
                                       course-name
                                       "."]))
                  (< (- (get holes-map :holes_remaining) number-holes) 0)
