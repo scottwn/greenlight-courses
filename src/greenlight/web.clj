@@ -64,6 +64,7 @@
                  (empty? (db/get-by-id (env :database-url) :members member))
                  (go-back "There is no member with that ID.")
                  (empty? holes-map) (do
+                                      (println "No record found in holes_remaining, adding max-holes")
                                       (db/insert!
                                         (env :database_url)
                                         :holes_remaining
