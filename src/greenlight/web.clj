@@ -10,6 +10,15 @@
 
 (def max-holes 36)
 
+(defn get-member-name [id]
+  (get
+    (first
+      (db/find-by-keys
+        (end :database-url)
+        :contacts
+        {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
+    :name))
+
 ;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
   {:status 200
@@ -42,15 +51,6 @@
      [:input {:type "submit" :value "Yeah let's go!"}]]
     [:form {:method "get" :action "/"}
      [:input {:type "submit" :value "Something's not right."}]]))
-
-(defn get-member-name [id]
-  (get
-    (first
-      (db/find-by-keys
-        (end :database-url)
-        :contacts
-        {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
-    :name))
 
 (defn go-back [content]
   (view-layout
