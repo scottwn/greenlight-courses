@@ -29,7 +29,7 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    [:span (get (db/get-by-id (env :database-url) :members member) :name)]
+    [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
     [:span " holes at "]
@@ -42,6 +42,15 @@
      [:input {:type "submit" :value "Yeah let's go!"}]]
     [:form {:method "get" :action "/"}
      [:input {:type "submit" :value "Something's not right."}]]))
+
+(defn get-member-name [id]
+  (get
+    (first
+      (db/find-by-keys
+        (end :database-url)
+        :contacts
+        {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
+    :name))
 
 (defn go-back [content]
   (view-layout
@@ -59,11 +68,6 @@
                                   (env :database-url)
                                   :holes_remaining
                                   {:member member :course course}))
-               member-name (get (db/get-by-id
-                                  (env :database-url)
-                                  :members
-                                  member)
-                                :name)
                course-name (get (db/get-by-id
                                   (env :database-url)
                                   :courses
@@ -84,14 +88,14 @@
                                         member
                                         number-holes))
                  (= (get holes-map :holes_remaining) 0)
-                 (go-back (apply str [member-name
+                 (go-back (apply str [(get-member-name member)
                                       " has already played "
                                       max-holes
                                       " holes at "
                                       course-name
                                       "."]))
                  (< (- (get holes-map :holes_remaining) number-holes) 0)
-                 (go-back (apply str [member-name
+                 (go-back (apply str [(get-member-name member)
                                       " can only play "
                                       (get holes-map :holes_remaining)
                                       " more holes at "
