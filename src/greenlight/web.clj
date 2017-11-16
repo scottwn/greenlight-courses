@@ -14,7 +14,7 @@
   (get
     (first
       (db/find-by-keys
-        (end :database-url)
+        (env :database-url)
         :contacts
         {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
     :name))
