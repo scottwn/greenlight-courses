@@ -127,7 +127,7 @@
               member (db/get-by-id (env :database-url) :members id)]
           (cond (empty? member) "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email)) "ID and email don't match.\n"
-                (empty? (get member :picture)) nil
+                (empty? (get member :picture)) ""
                 :else (get member :picture)))))
 
 (defn -main [& [port]]
