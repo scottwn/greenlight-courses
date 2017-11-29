@@ -123,7 +123,8 @@
              ["course = ? and member = ?" course member])
            (view-input)))
    (GET "/resources" [email id]
-        (let [member (db/get-by-id (env :database-url) :members id)]
+        (let [id (Integer/parseInt id)
+              member (db/get-by-id (env :database-url) :members id)]
           (cond (empty? member) "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email)) "ID and email don't match.\n"
                 :else (get member :picture)))))
