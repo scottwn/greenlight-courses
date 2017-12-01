@@ -5,9 +5,9 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
-            [clojure.java.jdbc :as db]
-            [byte-streams])
-  (:use [hiccup.core]))
+            [clojure.java.jdbc :as db])
+  (:use [hiccup.core]
+        [byte-streams]))
 
 (def max-holes 36)
 
@@ -127,10 +127,14 @@
         (let [id (Integer/parseInt id)
               member (db/get-by-id (env :database-url) :members id)
               picture (get member :picture)]
-          (cond (empty? member) "There is no member with that ID.\n"
-                (not (= (get member :contact_email) email)) "ID and email don't match.\n"
-                (empty? picture) ""
-                :else (str (type picture) "\n")))))
+          (cond (empty? member)
+                "There is no member with that ID.\n"
+                (not (= (get member :contact_email) email))
+                "ID and email don't match.\n"
+                (empty? picture)
+                ""
+                :else (do (transfer picture (java.io.File. (str id ".jpg")))
+                          (resources (str id ".jpg")))))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
