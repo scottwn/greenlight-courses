@@ -8,7 +8,6 @@
                  [ring/ring-jetty-adapter "1.4.0"]
                  [environ "1.0.0"]
                  [org.clojure/java.jdbc "0.7.0"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc4"]
                  [hiccup "1.0.5"]
                  [byte-streams "0.2.3"]
                  [mpg "1.3.0"]]
