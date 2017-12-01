@@ -133,7 +133,7 @@
           (cond (empty? member) "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email)) "ID and email don't match.\n"
                 (empty? picture) ""
-                :else (type picture)))))
+                :else (str (type picture))))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
