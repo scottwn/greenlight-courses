@@ -6,11 +6,8 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db]
-            [byte-streams]
-            [mpg.core :as mpg])
+            [byte-streams])
   (:use [hiccup.core]))
-
-(mpg/patch)
 
 (def max-holes 36)
 
