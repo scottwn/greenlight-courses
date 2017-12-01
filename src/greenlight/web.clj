@@ -134,7 +134,7 @@
                 (empty? picture)
                 ""
                 :else (do (transfer picture (java.io.File. (str id ".jpg")))
-                          (route/files (str id ".jpg")))))))
+                          (route/files (str id ".jpg") :root "/"))))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
