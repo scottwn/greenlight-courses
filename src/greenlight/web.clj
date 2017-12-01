@@ -128,11 +128,12 @@
            (view-input)))
    (GET "/resources" [email id]
         (let [id (Integer/parseInt id)
-              member (db/get-by-id (env :database-url) :members id)]
+              member (db/get-by-id (env :database-url) :members id)
+              picture (get member :picture)]
           (cond (empty? member) "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email)) "ID and email don't match.\n"
-                (empty? (get member :picture)) ""
-                :else (get member :picture)))))
+                (empty? picture) ""
+                :else (type picture)))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
