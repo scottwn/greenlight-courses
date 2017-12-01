@@ -133,7 +133,9 @@
                 "ID and email don't match.\n"
                 (empty? picture)
                 ""
-                :else (transfer picture (java.io.File. (str "/tmp/" id ".jpg")))))))
+                :else
+                (transfer picture (java.io.File. (str "/tmp/" id ".jpg")))
+                "transfer successful\n"))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
