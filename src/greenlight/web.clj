@@ -132,6 +132,8 @@
                 "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email))
                 "ID and email don't match.\n"
+                (empty? picture)
+                ""
                 :else (do
                         (transfer picture output)
                         output)))))
