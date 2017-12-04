@@ -126,16 +126,15 @@
    (GET "/resources" [email id]
         (let [id (Integer/parseInt id)
               member (db/get-by-id (env :database-url) :members id)
-              picture (get member :picture)]
+              picture (get member :picture)
+              output (java.io.File. (str "/tmp/" id ".jpg"))]
           (cond (empty? member)
                 "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email))
                 "ID and email don't match.\n"
-                (empty? picture)
-                ""
                 :else (do
-                        (transfer picture (java.io.File. (str "/tmp/" id ".jpg")))
-                        "transfer successful")))))
+                        (transfer picture output)
+                        output)))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
