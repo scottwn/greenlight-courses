@@ -143,7 +143,7 @@
            (db/update!
              (env :database-url)
              :members
-             {:picture (to-input-stream temp-file)}
+             {:picture (convert temp-file java.io.FileInputStream)}
              ["id = ?" id]))))
 
 (defn -main [& [port]]
