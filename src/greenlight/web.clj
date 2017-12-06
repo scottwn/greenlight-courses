@@ -140,7 +140,11 @@
    (POST "/resources" [id picture]
          (let [id (Integer/parseInt id)
                temp-file (get picture :tempfile)]
-           temp-file)))
+           (db/update!
+             (env :database-url)
+             :members
+             {:picture temp-file}
+             ["id = ?" id]))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
