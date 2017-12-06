@@ -138,7 +138,9 @@
                         (transfer picture output)
                         output))))
    (POST "/resources" [id picture]
-         (str id " " picture "\n")))
+         (let [id (Integer/parseInt id)
+               temp-file (get picture :tempfile)]
+           temp-file)))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
