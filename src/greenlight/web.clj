@@ -7,7 +7,8 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]
-        [byte-streams]))
+        [byte-streams]
+        [clojure.string]))
 
 (def max-holes 36)
 
@@ -123,20 +124,24 @@
              {:holes_remaining (- holes-remaining holes)}
              ["course = ? and member = ?" course member])
            (view-input)))
-   (GET "/resources" [email id]
+   (GET "/resources" [email id resource-type]
         (let [id (Integer/parseInt id)
               member (db/get-by-id (env :database-url) :members id)
               picture (get member :picture)
-              output (java.io.File. (str "/tmp/" id ".jpg"))]
+              output (java.io.File. (str "/tmp/" id ".jpg"))
+              email (lower-case email)]
           (cond (empty? member)
                 "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email))
                 "ID and email don't match.\n"
                 (empty? picture)
                 ""
-                :else (do
+                (= resource-type "name")
+                (get-member-name id)
+                (= resource-type "picture") (do
                         (transfer picture output)
-                        output))))
+                        output)
+                :else (str "You can't request a " resource-type "."))))
    (POST "/resources" [id picture]
          (let [id (Integer/parseInt id)
                temp-file (get picture :tempfile)]
