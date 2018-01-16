@@ -149,7 +149,8 @@
              (env :database-url)
              :members
              {:picture (to-byte-array temp-file)}
-             ["id = ?" id]))))
+             ["id = ?" id])))
+   (GET "/signup" "Sign up coming soon!"))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
