@@ -150,7 +150,7 @@
              :members
              {:picture (to-byte-array temp-file)}
              ["id = ?" id])))
-   (GET "/signup" "Sign up coming soon!"))
+   (GET "/signup" [] "Sign up coming soon!"))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
