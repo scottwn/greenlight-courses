@@ -7,6 +7,7 @@
             [environ.core :refer [env]]
             [clojure.java.jdbc :as db])
   (:use [hiccup.core]
+        [hiccup.element]
         [byte-streams]
         [clojure.string]))
 
@@ -47,7 +48,7 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    [:img {:src (get-member-picture member)}] [:br]
+    (image (get-member-picture member)) [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
