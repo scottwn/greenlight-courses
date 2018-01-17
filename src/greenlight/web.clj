@@ -57,7 +57,7 @@
              member
              "&email="
              (get-member-email member)
-             "resource-type=picture"))
+             "&resource-type=picture"))
     [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
