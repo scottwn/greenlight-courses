@@ -13,6 +13,7 @@
 (def max-holes 36)
 
 (defn get-member-name [id]
+  (pr (str "Getting member name for id " id))
   (get
     (first
       (db/find-by-keys
