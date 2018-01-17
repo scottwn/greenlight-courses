@@ -52,12 +52,14 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    (image (str 
-             "https://greenlight-courses.herokuapp.com/resources?id="
-             member
-             "&email="
-             (get-member-email member)
-             "&resource-type=picture"))
+    (image 
+      {:height 500}
+      (str 
+        "https://greenlight-courses.herokuapp.com/resources?id="
+        member
+        "&email="
+        (get-member-email member)
+        "&resource-type=picture"))
     [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
