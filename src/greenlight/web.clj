@@ -21,6 +21,13 @@
         {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
     :name))
 
+(defn get-member-picture [id]
+  (let [member (db/get-by-id (env :database-url) :members id)
+        picture (get member :picture)
+        output (java.io.File. (str "/tmp/" id ".jpg"))]
+    (transfer picture output)
+    output))
+
 ;; Return 200 status and use hiccup to render html.
 (defn view-layout [& content]
   {:status 200
@@ -40,7 +47,7 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    [:span (get (db/get-by-id (env :database-url) :members member) :picture)] [:br]
+    [:span (get-member-picture member)] [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
@@ -128,8 +135,6 @@
    (GET "/resources" [email id resource-type]
         (let [id (Integer/parseInt id)
               member (db/get-by-id (env :database-url) :members id)
-              picture (get member :picture)
-              output (java.io.File. (str "/tmp/" id ".jpg"))
               email (lower-case email)]
           (cond (empty? member)
                 "There is no member with that ID.\n"
@@ -139,9 +144,8 @@
                 (get-member-name id)
                 (empty? picture)
                 ""
-                (= resource-type "picture") (do
-                        (transfer picture output)
-                        output)
+                (= resource-type "picture")
+                (get-member-picture id)
                 :else (str "You can't request a " resource-type "."))))
    (POST "/resources" [id picture]
          (let [id (Integer/parseInt id)
