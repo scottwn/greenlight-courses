@@ -47,7 +47,7 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    [:span (get-member-picture member)] [:br]
+    [:img {:src (get-member-picture member)}] [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
