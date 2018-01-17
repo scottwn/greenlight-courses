@@ -13,13 +13,17 @@
 
 (def max-holes 36)
 
+(defn get-member-email [id]
+  (let [member (db/get-by-id (env :database-url) :members id)]
+    (get member :contact_email)))
+
 (defn get-member-name [id]
   (get
     (first
       (db/find-by-keys
         (env :database-url)
         :contacts
-        {:email (get (db/get-by-id (env :database-url) :members id) :contact_email)}))
+        {:email (get-member-email id)}))
     :name))
 
 (defn get-member-picture [id]
@@ -48,7 +52,13 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
-    (image (.getPath (get-member-picture member))) [:br]
+    (image (str 
+             "https://greenlight-courses.herokuapp.com/resources?id="
+             member
+             "&email="
+             (get-member-email member)
+             "resource-type=picture"))
+    [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
