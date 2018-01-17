@@ -135,6 +135,7 @@
    (GET "/resources" [email id resource-type]
         (let [id (Integer/parseInt id)
               member (db/get-by-id (env :database-url) :members id)
+              picture (get member :picture)
               email (lower-case email)]
           (cond (empty? member)
                 "There is no member with that ID.\n"
