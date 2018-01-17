@@ -13,7 +13,6 @@
 (def max-holes 36)
 
 (defn get-member-name [id]
-  (pr (str "Getting member name for id " id))
   (get
     (first
       (db/find-by-keys
@@ -135,10 +134,10 @@
                 "There is no member with that ID.\n"
                 (not (= (get member :contact_email) email))
                 "ID and email don't match.\n"
-                (empty? picture)
-                ""
                 (= resource-type "name")
                 (get-member-name id)
+                (empty? picture)
+                ""
                 (= resource-type "picture") (do
                         (transfer picture output)
                         output)
