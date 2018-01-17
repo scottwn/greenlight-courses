@@ -40,6 +40,7 @@
 
 (defn view-confirmation [course member holes]
   (view-layout
+    [:span (get (db/get-by-id (env :database-url) :members member) :picture)] [:br]
     [:span (get-member-name member)]
     [:span " is going to play "]
     [:span holes]
