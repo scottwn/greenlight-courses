@@ -5,12 +5,12 @@
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
-            [clojure.java.jdbc :as db])
+            [clojure.java.jdbc :as db]
+            [clj-exif-orientation.core :as ceo])
   (:use [hiccup.core]
         [hiccup.element]
         [byte-streams]
-        [clojure.string]
-        [clj-exif-orientation.core]))
+        [clojure.string]))
 
 (def max-holes 36)
 
@@ -168,7 +168,7 @@
            (db/update!
              (env :database-url)
              :members
-             {:picture (to-byte-array (without-exif temp-file))}
+             {:picture (to-byte-array (ceo/without-exif temp-file))}
              ["id = ?" id])))
    (GET "/signup" [] "Sign up coming soon!"))
 
