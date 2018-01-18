@@ -10,7 +10,7 @@
         [hiccup.element]
         [byte-streams]
         [clojure.string]
-        [clf-exif-orientation]))
+        [clj-exif-orientation.core]))
 
 (def max-holes 36)
 
