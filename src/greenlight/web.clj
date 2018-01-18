@@ -9,7 +9,8 @@
   (:use [hiccup.core]
         [hiccup.element]
         [byte-streams]
-        [clojure.string]))
+        [clojure.string]
+        [clf-exif-orientation]))
 
 (def max-holes 36)
 
@@ -167,7 +168,7 @@
            (db/update!
              (env :database-url)
              :members
-             {:picture (to-byte-array temp-file)}
+             {:picture (to-byte-array (without-exif temp-file))}
              ["id = ?" id])))
    (GET "/signup" [] "Sign up coming soon!"))
 

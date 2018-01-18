@@ -10,7 +10,8 @@
                  [org.clojure/java.jdbc "0.7.0"]
                  [byte-streams "0.2.3"]
                  [org.postgresql/postgresql "9.4-1201-jdbc4"]
-                 [hiccup "1.0.5"]]
+                 [hiccup "1.0.5"]
+                 [clj-exif-orientation "0.2.1"]]
   :min-lein-version "2.0.0"
   :plugins [[environ/environ.lein "0.3.1"]]
   :hooks [environ.leiningen.hooks]
